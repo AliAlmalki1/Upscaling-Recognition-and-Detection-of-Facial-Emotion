@@ -17,8 +17,6 @@ from keras.preprocessing.image import ImageDataGenerator , img_to_array, load_im
 from keras.applications.mobilenet import MobileNet, preprocess_input
 from keras.losses import categorical_crossentropy
 
-# Working with pre trained model
-
 base_model = MobileNet( input_shape=(224,224,3), include_top= False )
 
 for layer in base_model.layers:
@@ -28,7 +26,6 @@ for layer in base_model.layers:
 x = Flatten()(base_model.output)
 x = Dense(units=7 , activation='softmax' )(x)
 
-# creating our model.
 model = Model(base_model.input, x)
 
 model.compile(optimizer='adam', loss= categorical_crossentropy , metrics=['accuracy']  )
@@ -45,12 +42,9 @@ val_datagen = ImageDataGenerator(rescale = 1./255 )
 
 val_data = val_datagen.flow_from_directory(directory= "/content/test",target_size=(224,224),batch_size=32,)
 
-# to visualize the images in the traing data denerator
 
 t_img , label = train_data.next()
 
-#-----------------------------------------------------------------------------
-# function when called will prot the images
 def plotImages(img_arr, label):
   """
   input  :- images array
@@ -67,21 +61,15 @@ def plotImages(img_arr, label):
     if count == 20:
       break
 
-#-----------------------------------------------------------------------------
-# function call to plot the images
 plotImages(t_img, label)
 
-## having early stopping and model check point
 
 from keras.callbacks import ModelCheckpoint, EarlyStopping
 
-# early stopping
 es = EarlyStopping(monitor='val_accuracy', min_delta= 0.01 , patience= 5, verbose= 1, mode='auto')
 
-# model check point
 mc = ModelCheckpoint(filepath="best_model.h5", monitor= 'val_accuracy', verbose= 1, save_best_only= True, mode = 'auto')
 
-# puting call back in a list
 call_back = [es, mc]
 
 hist = model.fit_generator(train_data,
@@ -91,7 +79,6 @@ hist = model.fit_generator(train_data,
                            validation_steps= 8,
                            callbacks=[es,mc])
 
-# Loading the best fit model
 from keras.models import load_model
 model = load_model("/content/best_model.h5")
 
@@ -112,7 +99,6 @@ pred = np.argmax(model.predict(input_arr))
 
 print(f" the person in the image is {op[pred]}")
 
-# to display the image
 plt.imshow(input_arr[0])
 plt.title(f" the person in the image is {op[pred]}")
 plt.show()
@@ -120,19 +106,15 @@ plt.show()
 import cv2
 
 def upscale_image(image_path, scale_factor=2):
-    # Read the image
     img = cv2.imread(image_path)
 
-    # Upscale the image
     upscaled_img = cv2.resize(img, None, fx=scale_factor, fy=scale_factor, interpolation=cv2.INTER_CUBIC)
 
     return upscaled_img
 
-# Example usage
 image_path = path
 upscaled_image = upscale_image(image_path, scale_factor=2)
 
-# Save the upscaled image
 cv2.imwrite(path, upscaled_image)
 
 plt.imshow(upscaled_image)
@@ -150,7 +132,6 @@ pred = np.argmax(model.predict(input_arr))
 
 print(f" the person in the image is {op[pred]}")
 
-# to display the image
 plt.imshow(input_arr[0])
 plt.title(f" the person in the image is {op[pred]}")
 plt.show()
@@ -165,39 +146,29 @@ pred = np.argmax(model.predict(input_arr))
 
 print(f" the person in the image is {op[pred]}")
 
-# to display the image
 plt.subplot(1,3,1)
-#plt.figure(1)
 plt.imshow(input_arr[0])
 plt.title(f" the person in the image is {op[pred]}")
-# plt.show()
 
 import cv2
 
 
 def upscale_image(image_path, scale_factor=2):
-    # Read the image
     img = cv2.imread(image_path)
 
-    # Upscale the image
     upscaled_img = cv2.resize(img, None, fx=scale_factor, fy=scale_factor, interpolation=cv2.INTER_CUBIC)
 
     return upscaled_img
 
 
-# Upscale image
 image_path = path
 upscaled_image = upscale_image(image_path, scale_factor=2)
 
-# Save the upscaled image
 cv2.imwrite(path, upscaled_image)
 
 plt.subplot(1,3,2)
-#plt.figure(2)
 plt.imshow(upscaled_image)
 plt.title("upscal")
-# plt.show()
-
 
 img = load_img(path, target_size=(224, 224))
 
@@ -209,9 +180,8 @@ pred = np.argmax(model.predict(input_arr))
 
 print(f" the person in the image is {op[pred]}")
 
-# to display the image
 plt.subplot(1,3,3)
-#plt.figure(3)
+
 plt.imshow(input_arr[0])
 plt.title(f" the person in the image is {op[pred]}")
 plt.show()
